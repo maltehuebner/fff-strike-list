@@ -33,4 +33,19 @@ class StrikeEvent
         $this->dateTime = $dateTime;
         $this->location = $location;
     }
+
+    public function getCityName(): string
+    {
+        return $this->cityName;
+    }
+
+    public function getDateTime(): \DateTime
+    {
+        return $this->dateTime;
+    }
+
+    public function getLocation(): string
+    {
+        return $this->location;
+    }
 }
