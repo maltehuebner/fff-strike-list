@@ -8,6 +8,14 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class GermanParser implements GermanParserInterface
 {
+    /** @var array $list */
+    protected $list = [];
+
+    public function __construct()
+    {
+        $this->loadData();
+    }
+
     protected function createEventModel(string $eventLineContent): ?StrikeEvent
     {
         try {
@@ -17,6 +25,27 @@ class GermanParser implements GermanParserInterface
         } catch (\ErrorException $exception) {
             return null;
         }
+    }
+
+    protected function loadData(): GermanParser
+    {
+        $client = new Client();
+        $response = $client->get(self::LIST_URL);
+
+        $html = $response->getBody();
+        $crawler = new Crawler($response->getBody()->getContents());
+
+        $crawler = $crawler->filter('table.wp-block-table tbody tr');
+
+        foreach ($crawler as $eventRow) {
+            $eventLineContent = $eventRow->textContent;
+
+            if ($strikeEvent = $this->createEventModel($eventLineContent)) {
+                $this->list[] = $strikeEvent;
+            }
+        }
+
+        return $this;
     }
 
     protected function parseTime(string $time): \DateTime
@@ -32,29 +61,24 @@ class GermanParser implements GermanParserInterface
 
     public function getStrikeList(): array
     {
-        $client = new Client();
-        $response = $client->get(self::LIST_URL);
-
-        $html = $response->getBody();
-        $crawler = new Crawler($response->getBody()->getContents());
-
-        $crawler = $crawler->filter('table.wp-block-table tbody tr');
-
-        $eventList = [];
-
-        foreach ($crawler as $eventRow) {
-            $eventLineContent = $eventRow->textContent;
-
-            if ($strikeEvent = $this->createEventModel($eventLineContent)) {
-                $eventList[] = $strikeEvent;
-            }
-        }
-
-        return $eventList;
+        return $this->list;
     }
 
     public function enrichStrikeList(array $strikeList): array
     {
+        /** @var StrikeEvent $strikeEvent1 */
+        foreach ($strikeList as $strikeEvent1) {
+            /** @var StrikeEvent $strikeEvent2 */
+            foreach ($this->list as $strikeEvent2) {
+                if ($strikeEvent1->getCityName() === $strikeEvent2->getCityName()) {
+                    $strikeEvent1
+                        ->setLatitude($strikeEvent2->getLatitude())
+                        ->setLongitude($strikeEvent2->getLongitude())
+                        ->setLocation($strikeEvent2->getLocation())
+                        ->setDateTime($strikeEvent2->getDateTime());
+                }
+            }
+        }
         return $strikeList;
     }
 }

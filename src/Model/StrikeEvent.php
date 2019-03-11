@@ -54,17 +54,31 @@ class StrikeEvent
         return $this->cityName;
     }
 
-    public function getDateTime(): \DateTime
+    public function setDateTime(\DateTime $dateTime = null): StrikeEvent
+    {
+        $this->dateTime = $dateTime;
+
+        return $this;
+    }
+
+    public function getDateTime(): ?\DateTime
     {
         return $this->dateTime;
     }
 
-    public function getLocation(): string
+    public function setLocation(string $location = null): StrikeEvent
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    public function getLocation(): ?string
     {
         return $this->location;
     }
 
-    public function setLatitude(float $latitude): StrikeEvent
+    public function setLatitude(float $latitude = null): StrikeEvent
     {
         $this->latitude = $latitude;
 
@@ -76,7 +90,7 @@ class StrikeEvent
         return $this->latitude;
     }
 
-    public function setLongitude(float $longitude): StrikeEvent
+    public function setLongitude(float $longitude = null): StrikeEvent
     {
         $this->longitude = $longitude;
 
