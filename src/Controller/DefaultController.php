@@ -26,9 +26,9 @@ class DefaultController extends AbstractController
             return new JsonResponse($serializer->serialize($cache->get(self::CACHE_KEY), 'json'), 200, [], true);
         }
 
-        $eventList = $germanParser->getStrikeList();
+        $eventList = $internationalParser->getStrikeList();
 
-        $eventList = $internationalParser->enrichStrikeList($eventList);
+        $eventList = $germanParser->enrichStrikeList($eventList);
 
         $eventList = $geocoder->enrichStrikeList($eventList);
 
