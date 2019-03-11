@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Parser\InternationalParser;
+namespace App\Source\InternationalParser;
 
 use App\Model\FffStrikeData;
 use App\Model\StrikeEvent;
@@ -10,8 +10,6 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class InternationalParser implements InternationalParserInterface
 {
-    const MAP_URL = 'https://fridaysforfuture.org/events/map';
-
     /** @var SerializerInterface $serializer */
     protected $serializer;
 

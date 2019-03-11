@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Parser\GermanParser;
+namespace App\Source\GermanParser;
 
 interface GermanParserInterface
 {

@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Geocoder\GeocoderInterface;
-use App\Parser\GermanParser\GermanParserInterface;
-use App\Parser\InternationalParser\InternationalParserInterface;
+use App\Source\GermanParser\GermanParserInterface;
+use App\Source\InternationalParser\InternationalParserInterface;
 use JMS\Serializer\SerializerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
