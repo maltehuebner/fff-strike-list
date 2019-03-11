@@ -26,7 +26,6 @@ class StrikeListParser implements StrikeListParserInterface
             if ($strikeEvent = $this->createEventModel($eventLineContent)) {
                 $eventList[] = $strikeEvent;
             }
-
         }
 
         return $eventList;
@@ -37,7 +36,7 @@ class StrikeListParser implements StrikeListParserInterface
         try {
             list($cityName, $time, $location) = explode(',', $eventLineContent);
 
-            return new StrikeEvent($cityName, $this->parseTime($time), $location);
+            return new StrikeEvent(trim($cityName), $this->parseTime($time), trim($location));
         } catch (\ErrorException $exception) {
             return null;
         }
