@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace App\StrikeListParser;
+namespace App\Parser\GermanParser;
 
 use App\Model\StrikeEvent;
 use GuzzleHttp\Client;
 use Symfony\Component\DomCrawler\Crawler;
 
-class StrikeListParser implements StrikeListParserInterface
+class GermanParser implements GermanParserInterface
 {
     public function parse(): array
     {
