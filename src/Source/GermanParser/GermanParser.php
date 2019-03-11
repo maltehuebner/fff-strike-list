@@ -8,7 +8,29 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class GermanParser implements GermanParserInterface
 {
-    public function parse(): array
+    protected function createEventModel(string $eventLineContent): ?StrikeEvent
+    {
+        try {
+            list($cityName, $time, $location) = explode(',', $eventLineContent);
+
+            return new StrikeEvent(trim($cityName), $this->parseTime($time), trim($location));
+        } catch (\ErrorException $exception) {
+            return null;
+        }
+    }
+
+    protected function parseTime(string $time): \DateTime
+    {
+        preg_match( '/(\d{1,2})\:(\d{1,2})/' , $time, $matches);
+
+        list($foo, $hour, $minute) = $matches;
+
+        $dateTimeSpec = sprintf(self::DATE_TIME_SPEC, $hour, $minute);
+
+        return new \DateTime($dateTimeSpec, new \DateTimeZone('Europe/Berlin'));
+    }
+
+    public function getStrikeList(): array
     {
         $client = new Client();
         $response = $client->get(self::LIST_URL);
@@ -31,25 +53,8 @@ class GermanParser implements GermanParserInterface
         return $eventList;
     }
 
-    protected function createEventModel(string $eventLineContent): ?StrikeEvent
+    public function enrichStrikeList(array $strikeList): array
     {
-        try {
-            list($cityName, $time, $location) = explode(',', $eventLineContent);
-
-            return new StrikeEvent(trim($cityName), $this->parseTime($time), trim($location));
-        } catch (\ErrorException $exception) {
-            return null;
-        }
-    }
-
-    protected function parseTime(string $time): \DateTime
-    {
-        preg_match( '/(\d{1,2})\:(\d{1,2})/' , $time, $matches);
-
-        list($foo, $hour, $minute) = $matches;
-
-        $dateTimeSpec = sprintf(self::DATE_TIME_SPEC, $hour, $minute);
-
-        return new \DateTime($dateTimeSpec, new \DateTimeZone('Europe/Berlin'));
+        return $strikeList;
     }
 }

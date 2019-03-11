@@ -2,11 +2,9 @@
 
 namespace App\Source\Geocoder;
 
-use App\Model\StrikeEvent;
+use App\Source\SourceInterface;
 
-interface GeocoderInterface
+interface GeocoderInterface extends SourceInterface
 {
-    public function geocodeStrikeEvent(StrikeEvent $strikeEvent): StrikeEvent;
-
-    public function geocodeEventList(array $eventList): array;
+    public function enrichStrikeList(array $strikeList): array;
 }

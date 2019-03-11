@@ -2,9 +2,9 @@
 
 namespace App\Source\InternationalParser;
 
-interface InternationalParserInterface
+use App\Source\SourceInterface;
+
+interface InternationalParserInterface extends SourceInterface
 {
     const MAP_URL = 'https://fridaysforfuture.org/events/map';
-
-    public function enrichEventList(array $eventList): array;
 }

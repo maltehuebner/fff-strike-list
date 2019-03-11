@@ -16,7 +16,7 @@ class Geocoder implements GeocoderInterface
         $this->provider = $provider;
     }
 
-    public function geocodeStrikeEvent(StrikeEvent $strikeEvent): StrikeEvent
+    protected function geocodeStrikeEvent(StrikeEvent $strikeEvent): StrikeEvent
     {
         if ($strikeEvent->getLatitude() && $strikeEvent->getLongitude()) {
             return $strikeEvent;
@@ -38,15 +38,20 @@ class Geocoder implements GeocoderInterface
         return $strikeEvent;
     }
 
-    public function geocodeEventList(array $eventList): array
+    public function enrichStrikeList(array $strikeList): array
     {
         /** @var StrikeEvent $event */
-        foreach ($eventList as $event) {
+        foreach ($strikeList as $event) {
             if (!$event->getLatitude() || !$event->getLongitude()) {
                 $this->geocodeStrikeEvent($event);
             }
         }
 
-        return $eventList;
+        return $strikeList;
+    }
+
+    public function getStrikeList(): array
+    {
+        return [];
     }
 }

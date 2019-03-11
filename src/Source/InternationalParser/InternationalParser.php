@@ -41,7 +41,7 @@ class InternationalParser implements InternationalParserInterface
         return $this;
     }
 
-    public function enrichEventList(array $eventList): array
+    public function enrichStrikeList(array $eventList): array
     {
         /** @var StrikeEvent $strikeEvent */
         foreach ($eventList as $strikeEvent) {
@@ -56,5 +56,10 @@ class InternationalParser implements InternationalParserInterface
         }
 
         return $eventList;
+    }
+
+    public function getStrikeList(): array
+    {
+        return [];
     }
 }
