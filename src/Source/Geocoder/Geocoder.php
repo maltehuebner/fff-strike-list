@@ -3,6 +3,7 @@
 namespace App\Source\Geocoder;
 
 use App\Model\StrikeEvent;
+use Geocoder\Model\Coordinates;
 use Geocoder\Plugin\PluginProvider;
 use Geocoder\Query\GeocodeQuery;
 
@@ -16,23 +17,44 @@ class Geocoder implements GeocoderInterface
         $this->provider = $provider;
     }
 
+    protected function geocodeCityLocation(StrikeEvent $strikeEvent): ?Coordinates
+    {
+        $phrase = sprintf('%s, %s', $strikeEvent->getLocation(), $strikeEvent->getCityName());
+
+        return $this->geocode($phrase);
+    }
+
+    protected function geocodeCity(StrikeEvent $strikeEvent): ?Coordinates
+    {
+        $phrase = sprintf('%s', $strikeEvent->getCityName());
+
+        return $this->geocode($phrase);
+
+    }
+
+    protected function geocode(string $phrase): ?Coordinates
+    {
+        $query = GeocodeQuery::create($phrase);
+
+        $result = $this->provider->geocodeQuery($query);
+
+        if (!$result->isEmpty()) {
+            return $result->first()->getCoordinates();
+        }
+
+        return null;
+    }
+
     protected function geocodeStrikeEvent(StrikeEvent $strikeEvent): StrikeEvent
     {
         if ($strikeEvent->getLatitude() && $strikeEvent->getLongitude()) {
             return $strikeEvent;
         }
 
-        $searchPhrase = sprintf('%s, %s', $strikeEvent->getLocation(), $strikeEvent->getCityName());
-        $query = GeocodeQuery::create($searchPhrase);
+        $coord = $this->geocodeCityLocation($strikeEvent) ?? $this->geocodeCity($strikeEvent);
 
-        $result = $this->provider->geocodeQuery($query);
-
-        if (!$result->isEmpty()) {
-            $coord = $result->first()->getCoordinates();
-
-            if ($coord) {
-                $strikeEvent->setLatitude($coord->getLatitude())->setLongitude($coord->getLongitude());
-            }
+        if ($coord) {
+            $strikeEvent->setLatitude($coord->getLatitude())->setLongitude($coord->getLongitude());
         }
 
         return $strikeEvent;
