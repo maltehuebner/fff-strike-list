@@ -68,10 +68,20 @@ class StrikeEvent
         return $this;
     }
 
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
     public function setLongitude(float $longitude): StrikeEvent
     {
         $this->longitude = $longitude;
 
         return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
     }
 }
