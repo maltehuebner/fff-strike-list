@@ -70,6 +70,15 @@ class InternationalParser implements InternationalParserInterface
         return $strikeList;
     }
 
+    protected function trimTownNames(string $town): string
+    {
+        $town = preg_replace('/[^[:alpha:], ]/', '', $town);
+        $town = trim($town);
+        $town = ucfirst($town);
+
+        return $town;
+    }
+
     protected function convertModel(FffStrikeData $strikeData): StrikeEvent
     {
         try {
@@ -78,7 +87,7 @@ class InternationalParser implements InternationalParserInterface
             $dateTime = null;
         }
 
-        return new StrikeEvent($strikeData->getTown(),
+        return new StrikeEvent($this->trimTownNames($strikeData->getTown()),
             $dateTime,
             $strikeData->getLocation(),
             $strikeData->getLat(),
