@@ -3,6 +3,7 @@
 namespace App\CoordEnricher;
 
 use App\Model\FffStrikeData;
+use App\Model\StrikeEvent;
 use GuzzleHttp\Client;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -20,7 +21,7 @@ class CoordEnricher implements CoordEnricherInterface
         $this->serializer = $serializer;
     }
 
-    public function loadCoords(): void
+    public function loadCoords(): CoordEnricherInterface
     {
         $client = new Client();
         $response = $client->get('https://fridaysforfuture.org/events/map');
@@ -34,5 +35,24 @@ class CoordEnricher implements CoordEnricherInterface
         $source = str_replace(['var eventmap_data = ', '}];'], ['', '}]'], $source);
 
         $this->list = $this->serializer->deserialize($source, 'array<'.FffStrikeData::class.'>', 'json');
+
+        return $this;
+    }
+
+    public function enrichEventList(array $eventList): array
+    {
+        /** @var StrikeEvent $strikeEvent */
+        foreach ($eventList as $strikeEvent) {
+            /** @var FffStrikeData $fffStrikeData */
+            foreach ($this->list as $fffStrikeData) {
+                if ($strikeEvent->getCityName() === $fffStrikeData->getTown()) {
+                    $strikeEvent
+                        ->setLatitude($fffStrikeData->getLat())
+                        ->setLongitude($fffStrikeData->getLon());
+                }
+            }
+        }
+
+        return $eventList;
     }
 }

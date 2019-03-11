@@ -27,6 +27,18 @@ class StrikeEvent
      */
     protected $location;
 
+    /**
+     * @var float $latitude
+     * @JMS\Expose
+     */
+    protected $latitude;
+
+    /**
+     * @var float $longitude
+     * @JMS\Expose
+     */
+    protected $longitude;
+
     public function __construct(string $cityName, \DateTime $dateTime, string $location)
     {
         $this->cityName = $cityName;
@@ -47,5 +59,19 @@ class StrikeEvent
     public function getLocation(): string
     {
         return $this->location;
+    }
+
+    public function setLatitude(float $latitude): StrikeEvent
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function setLongitude(float $longitude): StrikeEvent
+    {
+        $this->longitude = $longitude;
+
+        return $this;
     }
 }

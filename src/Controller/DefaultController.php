@@ -18,7 +18,7 @@ class DefaultController extends AbstractController
     {
         $eventList = $strikeListParser->parse();
 
-        $coordEnricher->loadCoords();
+        $eventList = $coordEnricher->loadCoords()->enrichEventList($eventList);
 
         return new Response($serializer->serialize($eventList, 'json'));
     }

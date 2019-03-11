@@ -17,7 +17,7 @@ class FffStrikeData
     protected $country;
 
     /**
-     * @var \DateTime $town
+     * @var string $town
      * @JMS\Expose
      * @JMS\Type("string")
      */
@@ -105,7 +105,7 @@ class FffStrikeData
         return $this->country;
     }
 
-    public function getTown(): \DateTime
+    public function getTown(): string
     {
         return $this->town;
     }
