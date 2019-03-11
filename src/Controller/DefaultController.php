@@ -9,6 +9,7 @@ use JMS\Serializer\SerializerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
@@ -19,9 +20,9 @@ class DefaultController extends AbstractController
     /**
      * @Route("/list")
      */
-    public function listAction(CacheInterface $cache, GermanParserInterface $germanParser, InternationalParserInterface $internationalParser, SerializerInterface $serializer, GeocoderInterface $geocoder): JsonResponse
+    public function listAction(Request $request, CacheInterface $cache, GermanParserInterface $germanParser, InternationalParserInterface $internationalParser, SerializerInterface $serializer, GeocoderInterface $geocoder): JsonResponse
     {
-        if ($cache->has(self::CACHE_KEY)) {
+        if ($cache->has(self::CACHE_KEY) && !$request->query->has('flush')) {
             return new JsonResponse($serializer->serialize($cache->get(self::CACHE_KEY), 'json'), 200, [], true);
         }
 
