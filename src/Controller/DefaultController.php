@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends AbstractController
 {
     const CACHE_KEY = 'strike-list';
-    const CACHE_TTL = 3600;
+    const CACHE_TTL = 1;
 
     /**
      * @Route("/list")
@@ -30,12 +30,7 @@ class DefaultController extends AbstractController
 
         $eventList = $coordEnricher->loadCoords()->enrichEventList($eventList);
 
-        /** @var StrikeEvent $event */
-        foreach ($eventList as $event) {
-            if (!$event->getLatitude() || !$event->getLongitude()) {
-                $geocoder->geocodeStrikeEvent($event);
-            }
-        }
+        $eventList = $geocoder->geocodeEventList($eventList);
 
         $cache->set(self::CACHE_KEY, $eventList, self::CACHE_TTL);
 

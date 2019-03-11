@@ -37,4 +37,16 @@ class Geocoder implements GeocoderInterface
 
         return $strikeEvent;
     }
+
+    public function geocodeEventList(array $eventList): array
+    {
+        /** @var StrikeEvent $event */
+        foreach ($eventList as $event) {
+            if (!$event->getLatitude() || !$event->getLongitude()) {
+                $this->geocodeStrikeEvent($event);
+            }
+        }
+
+        return $eventList;
+    }
 }

@@ -7,4 +7,6 @@ use App\Model\StrikeEvent;
 interface GeocoderInterface
 {
     public function geocodeStrikeEvent(StrikeEvent $strikeEvent): StrikeEvent;
+
+    public function geocodeEventList(array $eventList): array;
 }
