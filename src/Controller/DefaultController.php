@@ -7,7 +7,7 @@ use App\StrikeListParser\StrikeListParserInterface;
 use JMS\Serializer\SerializerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
@@ -18,18 +18,18 @@ class DefaultController extends AbstractController
     /**
      * @Route("/list")
      */
-    public function listAction(CacheInterface $cache, StrikeListParserInterface $strikeListParser, CoordEnricherInterface $coordEnricher, SerializerInterface $serializer): Response
+    public function listAction(CacheInterface $cache, StrikeListParserInterface $strikeListParser, CoordEnricherInterface $coordEnricher, SerializerInterface $serializer): JsonResponse
     {
         if ($cache->has(self::CACHE_KEY)) {
-            return new Response($serializer->serialize($cache->get(self::CACHE_KEY), 'json'));
+            return new JsonResponse($serializer->serialize($cache->get(self::CACHE_KEY), 'json'), 200, [], true);
         }
-        
+
         $eventList = $strikeListParser->parse();
 
         $eventList = $coordEnricher->loadCoords()->enrichEventList($eventList);
 
         $cache->set(self::CACHE_KEY, $eventList, self::CACHE_TTL);
 
-        return new Response($serializer->serialize($eventList, 'json'));
+        return new JsonResponse($serializer->serialize($eventList, 'json'), 200, [], true);
     }
 }
