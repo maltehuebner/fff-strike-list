@@ -20,10 +20,10 @@ class InternationalParser implements InternationalParserInterface
     {
         $this->serializer = $serializer;
 
-        $this->loadCoords();
+        $this->loadData();
     }
 
-    protected function loadCoords(): InternationalParserInterface
+    protected function loadData(): InternationalParserInterface
     {
         $client = new Client();
         $response = $client->get(self::MAP_URL);
@@ -58,8 +58,36 @@ class InternationalParser implements InternationalParserInterface
         return $eventList;
     }
 
+    protected function convertList(): array
+    {
+        $strikeList = [];
+
+        /** @var FffStrikeData $data */
+        foreach ($this->list as $data) {
+            $strikeList[] = $this->convertModel($data);
+        }
+
+        return $strikeList;
+    }
+
+    protected function convertModel(FffStrikeData $strikeData): StrikeEvent
+    {
+        try {
+            $dateTime = new \DateTime($strikeData->getDate());
+        } catch (\Exception $exception) {
+            $dateTime = null;
+        }
+
+        return new StrikeEvent($strikeData->getTown(),
+            $dateTime,
+            $strikeData->getLocation(),
+            $strikeData->getLat(),
+            $strikeData->getLon());
+
+    }
+
     public function getStrikeList(): array
     {
-        return [];
+        return $this->convertList();
     }
 }

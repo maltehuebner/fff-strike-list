@@ -14,12 +14,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends AbstractController
 {
     const CACHE_KEY = 'strike-list';
-    const CACHE_TTL = 1;
+    const CACHE_TTL = 3600;
 
     /**
      * @Route("/list")
      */
-    public function listAction(CacheInterface $cache, GermanParserInterface $germanParser, InternationalParserInterface $coordEnricher, SerializerInterface $serializer, GeocoderInterface $geocoder): JsonResponse
+    public function listAction(CacheInterface $cache, GermanParserInterface $germanParser, InternationalParserInterface $internationalParser, SerializerInterface $serializer, GeocoderInterface $geocoder): JsonResponse
     {
         if ($cache->has(self::CACHE_KEY)) {
             return new JsonResponse($serializer->serialize($cache->get(self::CACHE_KEY), 'json'), 200, [], true);
@@ -27,7 +27,7 @@ class DefaultController extends AbstractController
 
         $eventList = $germanParser->getStrikeList();
 
-        $eventList = $coordEnricher->enrichStrikeList($eventList);
+        $eventList = $internationalParser->enrichStrikeList($eventList);
 
         $eventList = $geocoder->enrichStrikeList($eventList);
 

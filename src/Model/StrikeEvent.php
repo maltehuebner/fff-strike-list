@@ -39,11 +39,14 @@ class StrikeEvent
      */
     protected $longitude;
 
-    public function __construct(string $cityName, \DateTime $dateTime, string $location)
+    public function __construct(string $cityName, \DateTime $dateTime, string $location, float $latitude = null, float $longitude = null)
     {
         $this->cityName = $cityName;
         $this->dateTime = $dateTime;
         $this->location = $location;
+
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
     }
 
     public function getCityName(): string
