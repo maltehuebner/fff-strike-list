@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\CoordEnricher;
+namespace App\Parser\InternationalParser;
 
 use App\Model\FffStrikeData;
 use App\Model\StrikeEvent;
@@ -8,8 +8,10 @@ use GuzzleHttp\Client;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
-class CoordEnricher implements CoordEnricherInterface
+class InternationalParser implements InternationalParserInterface
 {
+    const MAP_URL = 'https://fridaysforfuture.org/events/map';
+
     /** @var SerializerInterface $serializer */
     protected $serializer;
 
@@ -19,12 +21,14 @@ class CoordEnricher implements CoordEnricherInterface
     public function __construct(SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
+
+        $this->loadCoords();
     }
 
-    public function loadCoords(): CoordEnricherInterface
+    protected function loadCoords(): InternationalParserInterface
     {
         $client = new Client();
-        $response = $client->get('https://fridaysforfuture.org/events/map');
+        $response = $client->get(self::MAP_URL);
 
         $crawler = new Crawler($response->getBody()->getContents());
 

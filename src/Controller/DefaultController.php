@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\CoordEnricher\CoordEnricherInterface;
 use App\Geocoder\GeocoderInterface;
 use App\Parser\GermanParser\GermanParserInterface;
+use App\Parser\InternationalParser\InternationalParserInterface;
 use JMS\Serializer\SerializerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +19,7 @@ class DefaultController extends AbstractController
     /**
      * @Route("/list")
      */
-    public function listAction(CacheInterface $cache, GermanParserInterface $germanParser, CoordEnricherInterface $coordEnricher, SerializerInterface $serializer, GeocoderInterface $geocoder): JsonResponse
+    public function listAction(CacheInterface $cache, GermanParserInterface $germanParser, InternationalParserInterface $coordEnricher, SerializerInterface $serializer, GeocoderInterface $geocoder): JsonResponse
     {
         if ($cache->has(self::CACHE_KEY)) {
             return new JsonResponse($serializer->serialize($cache->get(self::CACHE_KEY), 'json'), 200, [], true);
@@ -27,7 +27,7 @@ class DefaultController extends AbstractController
 
         $eventList = $germanParser->parse();
 
-        $eventList = $coordEnricher->loadCoords()->enrichEventList($eventList);
+        $eventList = $coordEnricher->enrichEventList($eventList);
 
         $eventList = $geocoder->geocodeEventList($eventList);
 
