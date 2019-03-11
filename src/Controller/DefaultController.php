@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Geocoder\GeocoderInterface;
+use App\Source\Geocoder\GeocoderInterface;
 use App\Source\GermanParser\GermanParserInterface;
 use App\Source\InternationalParser\InternationalParserInterface;
 use JMS\Serializer\SerializerInterface;

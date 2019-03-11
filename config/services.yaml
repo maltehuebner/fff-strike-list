@@ -29,6 +29,6 @@ services:
     app.simple_cache:
         class: Symfony\Component\Cache\Simple\Psr6Cache
 
-    App\Geocoder\Geocoder:
+    App\Source\Geocoder\Geocoder:
         arguments:
             - '@bazinga_geocoder.provider.nominatim'
