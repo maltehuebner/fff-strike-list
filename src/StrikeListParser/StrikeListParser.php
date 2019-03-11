@@ -23,17 +23,34 @@ class StrikeListParser implements StrikeListParserInterface
         foreach ($crawler as $eventRow) {
             $eventLineContent = $eventRow->textContent;
 
-            try {
-                list($cityName, $time, $location) = explode(',', $eventLineContent);
-
-                $model = new StrikeEvent($cityName, new \DateTime(), $location);
-
-                $eventList[] = $model;
-            } catch (\ErrorException $exception) {
-
+            if ($strikeEvent = $this->createEventModel($eventLineContent)) {
+                $eventList[] = $strikeEvent;
             }
+
         }
 
         return $eventList;
+    }
+
+    protected function createEventModel(string $eventLineContent): ?StrikeEvent
+    {
+        try {
+            list($cityName, $time, $location) = explode(',', $eventLineContent);
+
+            return new StrikeEvent($cityName, $this->parseTime($time), $location);
+        } catch (\ErrorException $exception) {
+            return null;
+        }
+    }
+
+    protected function parseTime(string $time): \DateTime
+    {
+        preg_match( '/(\d{1,2})\:(\d{1,2})/' , $time, $matches);
+
+        list($foo, $hour, $minute) = $matches;
+
+        $dateTimeSpec = sprintf(self::DATE_TIME_SPEC, $hour, $minute);
+
+        return new \DateTime($dateTimeSpec, new \DateTimeZone('Europe/Berlin'));
     }
 }
