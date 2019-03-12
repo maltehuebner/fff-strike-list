@@ -4,7 +4,7 @@ namespace App\Source\InternationalParser;
 
 use App\Model\FffStrikeData;
 use App\Model\StrikeEvent;
-use GuzzleHttp\Client;
+use App\Source\SourceLoaderInterface;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -13,22 +13,23 @@ class InternationalParser implements InternationalParserInterface
     /** @var SerializerInterface $serializer */
     protected $serializer;
 
+    /** @var SourceLoaderInterface $sourceLoader */
+    protected $sourceLoader;
+
     /** @var array $list */
     protected $list = [];
 
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(SourceLoaderInterface $sourceLoader, SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
+        $this->sourceLoader = $sourceLoader;
 
         $this->loadData();
     }
 
     protected function loadData(): InternationalParserInterface
     {
-        $client = new Client();
-        $response = $client->get(self::MAP_URL);
-
-        $crawler = new Crawler($response->getBody()->getContents());
+        $crawler = new Crawler($this->sourceLoader->load(self::MAP_URL));
 
         $crawler = $crawler->filter('body.page-map script');
 

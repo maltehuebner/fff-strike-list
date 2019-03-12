@@ -3,16 +3,22 @@
 namespace App\Source\GermanParser;
 
 use App\Model\StrikeEvent;
+use App\Source\SourceLoaderInterface;
 use GuzzleHttp\Client;
 use Symfony\Component\DomCrawler\Crawler;
 
 class GermanParser implements GermanParserInterface
 {
+    /** @var SourceLoaderInterface $sourceLoader */
+    protected $sourceLoader;
+
     /** @var array $list */
     protected $list = [];
 
-    public function __construct()
+    public function __construct(SourceLoaderInterface $sourceLoader)
     {
+        $this->sourceLoader = $sourceLoader;
+
         $this->loadData();
     }
 
@@ -29,11 +35,7 @@ class GermanParser implements GermanParserInterface
 
     protected function loadData(): GermanParser
     {
-        $client = new Client();
-        $response = $client->get(self::LIST_URL);
-
-        $html = $response->getBody();
-        $crawler = new Crawler($response->getBody()->getContents());
+        $crawler = new Crawler($this->sourceLoader->load(self::LIST_URL));
 
         $crawler = $crawler->filter('table.wp-block-table tbody tr');
 
