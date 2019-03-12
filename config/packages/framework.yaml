@@ -17,7 +17,7 @@ framework:
         log: true
 
     cache:
-        app: cache.adapter.redis
+        app: cache.adapter.filesystem
         pools:
             app.cache.acme:
                 adapter: cache.app
