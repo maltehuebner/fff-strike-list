@@ -39,6 +39,13 @@ class StrikeEvent
      */
     protected $longitude;
 
+    /**
+     * @var array $links
+     * @JMS\Expose
+     * @JMS\Type("array<App\Model\StrikeLink>")
+     */
+    protected $links = [];
+
     public function __construct(string $cityName, \DateTime $dateTime, string $location, float $latitude = null, float $longitude = null)
     {
         $this->cityName = $cityName;
@@ -100,5 +107,17 @@ class StrikeEvent
     public function getLongitude(): ?float
     {
         return $this->longitude;
+    }
+
+    public function setLinks(array $links): StrikeEvent
+    {
+        $this->links = $links;
+
+        return $this;
+    }
+
+    public function getLinks(): array
+    {
+        return $this->links;
     }
 }

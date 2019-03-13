@@ -2,6 +2,7 @@
 
 namespace App\Source\InternationalParser;
 
+use App\LinkFactory\LinkFactoryInterface;
 use App\Model\FffStrikeData;
 use App\Model\StrikeEvent;
 use App\Source\SourceLoaderInterface;
@@ -16,13 +17,17 @@ class InternationalParser implements InternationalParserInterface
     /** @var SourceLoaderInterface $sourceLoader */
     protected $sourceLoader;
 
+    /** @var LinkFactoryInterface $linkFactory */
+    protected $linkFactory;
+
     /** @var array $list */
     protected $list = [];
 
-    public function __construct(SourceLoaderInterface $sourceLoader, SerializerInterface $serializer)
+    public function __construct(LinkFactoryInterface $linkFactory, SourceLoaderInterface $sourceLoader, SerializerInterface $serializer)
     {
         $this->serializer = $serializer;
         $this->sourceLoader = $sourceLoader;
+        $this->linkFactory = $linkFactory;
 
         $this->loadData();
     }
@@ -51,7 +56,8 @@ class InternationalParser implements InternationalParserInterface
                 if ($strikeEvent->getCityName() === $fffStrikeData->getTown()) {
                     $strikeEvent
                         ->setLatitude($fffStrikeData->getLat())
-                        ->setLongitude($fffStrikeData->getLon());
+                        ->setLongitude($fffStrikeData->getLon())
+                        ->setLinks($this->linkFactory->grepLinks($fffStrikeData));
                 }
             }
         }
@@ -80,6 +86,12 @@ class InternationalParser implements InternationalParserInterface
         return $town;
     }
 
+    protected function grepLinks(FffStrikeData $fffStrikeData): array
+    {
+
+        return [];
+    }
+
     protected function convertModel(FffStrikeData $strikeData): StrikeEvent
     {
         try {
@@ -93,7 +105,6 @@ class InternationalParser implements InternationalParserInterface
             $strikeData->getLocation(),
             $strikeData->getLat(),
             $strikeData->getLon());
-
     }
 
     public function getStrikeList(): array
